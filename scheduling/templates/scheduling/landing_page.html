@@ -1,0 +1,167 @@
+{% extends 'headermenu.html' %}
+
+{% block title %}Scheduling{% endblock %}
+
+{% block header_message %}Scheduling{% endblock %}
+
+{% block content %}
+<!-- Control Section: Contains Quick Actions and Date Range Picker -->
+<div class="controls" style="background-color: lightgray; padding: 20px;">
+    <!-- Quick Actions Icon -->
+    <div class="quick-actions" style="display: inline-block;">
+        <span class="quick-actions-icon" onclick="toggleQuickActions()">⚡ Quick Actions</span>
+        <!-- Placeholder for future quick actions -->
+    </div>
+
+    <!-- Date Range Picker -->
+    <div class="calendar" style="display: inline-block;">
+        <span class="calendar-icon" onclick="toggleCalendar()">📅</span>
+        <div class="calendar-dropdown" id="calendarDropdown" style="display:none; position: relative; background-color: white; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+            <div id="dateRangeInputs">
+                <h4>Date Range</h4>
+                <input type="date" id="start_date" onchange="updateCalendarView()">
+                <input type="date" id="end_date" onchange="updateCalendarView()">
+                <div id="calendarView"></div>
+                <button onclick="applyDateRange()">Apply</button>
+                <button onclick="cancelDateRange()">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Content Section: Main content of the Scheduling page -->
+<div class="container" style="background-color: lightblue; padding: 20px; min-height: 400px;">
+    <h2 class="text-center mt-5">Welcome to the Scheduling Page!</h2>
+    <p class="text-center">This is the landing page for Scheduling.</p>
+</div>
+
+<script>
+    /**
+     * Toggles the visibility of the Quick Actions menu.
+     */
+    function toggleQuickActions() {
+        alert('Quick Actions clicked');
+        // Add functionality to display quick actions
+    }
+
+    /**
+     * Toggles the visibility of the Date Range Picker dropdown.
+     */
+    function toggleCalendar() {
+        var calendarDropdown = document.getElementById("calendarDropdown");
+        if (calendarDropdown.style.display === "block") {
+            calendarDropdown.style.display = "none";
+        } else {
+            calendarDropdown.style.display = "block";
+            updateCalendarView();
+        }
+    }
+
+    /**
+     * Updates the calendar view based on the selected date range.
+     */
+    function updateCalendarView() {
+        var startDate = document.getElementById("start_date").value;
+        var endDate = document.getElementById("end_date").value;
+        var calendarView = document.getElementById("calendarView");
+
+        if (startDate && endDate) {
+            // Update the calendar view based on selected date range
+            var start = new Date(startDate);
+            var end = new Date(endDate);
+            var calendarHtml = "<h5>Aug 2024</h5><table><tr><th>Su</th><th>Mo</th><th>Tu</th><th>We</th><th>Th</th><th>Fr</th><th>Sa</th></tr><tr>";
+
+            for (var d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+                if (d.getDay() === 0 && d > start) {
+                    calendarHtml += "</tr><tr>";
+                }
+                calendarHtml += "<td>" + d.getDate() + "</td>";
+            }
+
+            calendarHtml += "</tr></table>";
+            calendarView.innerHTML = calendarHtml;
+        } else {
+            calendarView.innerHTML = "";
+        }
+    }
+
+    /**
+     * Applies the selected date range and updates the view accordingly.
+     */
+    function applyDateRange() {
+        toggleCalendar();
+    }
+
+    /**
+     * Cancels the date range selection and hides the date range picker.
+     */
+    function cancelDateRange() {
+        document.getElementById("start_date").value = "";
+        document.getElementById("end_date").value = "";
+        updateCalendarView();
+        toggleCalendar();
+    }
+</script>
+
+<style>
+    /**
+     * Styles for the control section.
+     */
+    .controls {
+        display: flex;
+        justify-content: space-between;
+        margin: 0;
+    }
+
+    /**
+     * Styles for the quick actions icon.
+     */
+    .quick-actions-icon, .calendar-icon {
+        cursor: pointer;
+        font-size: 24px;
+    }
+
+    /**
+     * Styles for the calendar dropdown.
+     */
+    .calendar-dropdown {
+        position: absolute;
+        right: 20px;
+        background-color: white;
+        border: 1px solid #ccc;
+        padding: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+    }
+
+    /**
+     * Styles for the date range inputs and buttons.
+     */
+    .calendar-dropdown h4 {
+        margin-top: 0;
+    }
+
+    .calendar-dropdown select, .calendar-dropdown input, .calendar-dropdown button {
+        display: block;
+        margin: 5px 0;
+    }
+
+    /**
+     * Styles for the calendar view table.
+     */
+    #calendarView {
+        margin-top: 10px;
+    }
+
+    #calendarView table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    #calendarView th, #calendarView td {
+        border: 1px solid #ccc;
+        text-align: center;
+        padding: 5px;
+    }
+</style>
+{% endblock %}
