@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-# def landing_page(request):
+# def landing_page(request): I'm testing the push update git. 
 #     return render(request, 'timekeeping/landing_page.html')
 
 def employee_summary(request):
