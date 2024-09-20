@@ -18,7 +18,7 @@ git clone https://github.com/bpmc-group/bpmc.git
 
 #### Django (from cmd line in bpmc folder)
 *   python manage.py --version 
-*   If this command doesn't return 5.0.x or new, install an appropriate version of Django by following the instructions at https://www.djangoproject.com/download/
+*   If this command doesn't return 5.0.x or newer, install an appropriate version of Django by following the instructions at https://www.djangoproject.com/download/
 
 #### Sqlite3
 Sqlite3 is the default lightweight relational database manager; Python can create, read and write Sqlite3 database files without requiring separate database drivers. Different databases can be substituted for Sqlite.
