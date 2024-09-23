@@ -15,7 +15,7 @@ maintain a server in the background.)
 
 """
 
-from djagno.core.management.utils import get_random_secret_key
+from django.core.management.utils import get_random_secret_key
 from pathlib import Path
 import os
 import sys
