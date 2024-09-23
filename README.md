@@ -37,6 +37,6 @@ In a web browser, enter localhost:8000/ in the address bar. The login screen wil
 
 ### Project Shutdown
 
-To exit the web page, close the tab on the browser or exit the browser.
-
 To stop the server, press Ctrl-c  (the break command)
+
+Verify the server has stopped by trying to reload the web page. If it gives an error message, the server has stopped and you can close your tab in the browser. 
