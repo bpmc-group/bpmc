@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Info - Time Application</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #c1b7d8, #5d898f);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .info-container {
+            max-width: 800px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px 40px;
+            text-align: center;
+        }
+        h1 {
+            color: #557ea1;
+            margin-bottom: 20px;
+        }
+        .info-text {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .email-form input {
+            margin-bottom: 10px;
+        }
+        .back-home {
+            margin-top: 20px;
+            color: #0074D9;
+            text-decoration: none;
+        }
+        .back-home:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="info-container">
+        <h1>About the Time Application</h1>
+        <p class="info-text">
+            The Time Application is your all-in-one solution for managing timecards, schedules, and workforce planning.
+            Whether you're clocking in, managing schedules, or reviewing reports, our application ensures efficiency and accuracy.
+        </p>
+
+        <form class="email-form">
+            <h3>Request More Information</h3>
+            <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+            <button type="submit" class="btn btn-primary w-100">Submit</button>
+        </form>
+
+        <a href="/" class="back-home">Back to Login</a>
+    </div>
+</body>
+</html>

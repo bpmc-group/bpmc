@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snake Game</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+    canvas {
+      border: 2px solid #fff;
+      background: #222;
+    }
+    #highscores {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <h1>Snake Game</h1>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <div id="highscores">
+      <h3>High Scores:</h3>
+      <ul id="highscoresList"></ul>
+    </div>
+  </div>
+
+  <script>
+    // Game Variables
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const gridSize = 20;
+    let snake = [{ x: gridSize * 2, y: gridSize * 2 }];
+    let direction = { x: gridSize, y: 0 };
+    let food = { x: gridSize * 5, y: gridSize * 5 };
+    let gameOver = false;
+    let score = 0;
+
+    // Draw Snake
+    function drawSnake() {
+      ctx.fillStyle = "lime";
+      snake.forEach(segment => {
+        ctx.fillRect(segment.x, segment.y, gridSize, gridSize);
+      });
+    }
+
+    // Move Snake
+    function moveSnake() {
+      const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
+      snake.unshift(head);
+
+      // Check for collision with food
+      if (head.x === food.x && head.y === food.y) {
+        score++;
+        placeFood();
+      } else {
+        snake.pop(); // Remove tail
+      }
+
+      // Check for collisions
+      if (
+        head.x < 0 || head.y < 0 || 
+        head.x >= canvas.width || 
+        head.y >= canvas.height || 
+        snake.slice(1).some(segment => segment.x === head.x && segment.y === head.y)
+      ) {
+        gameOver = true;
+      }
+    }
+
+    // Place Food
+    function placeFood() {
+      food.x = Math.floor(Math.random() * canvas.width / gridSize) * gridSize;
+      food.y = Math.floor(Math.random() * canvas.height / gridSize) * gridSize;
+    }
+
+    // Draw Food
+    function drawFood() {
+      ctx.fillStyle = "red";
+      ctx.fillRect(food.x, food.y, gridSize, gridSize);
+    }
+
+    // Game Loop
+    function gameLoop() {
+      if (gameOver) {
+        alert(`Game Over! Your score: ${score}`);
+        saveHighScore(score);
+        resetGame();
+        return;
+      }
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawFood();
+      moveSnake();
+      drawSnake();
+    }
+
+    // Reset Game
+    function resetGame() {
+      snake = [{ x: gridSize * 2, y: gridSize * 2 }];
+      direction = { x: gridSize, y: 0 };
+      food = { x: gridSize * 5, y: gridSize * 5 };
+      gameOver = false;
+      score = 0;
+    }
+
+    // Handle Key Press
+    document.addEventListener("keydown", e => {
+      const { x, y } = direction;
+      if (e.key === "ArrowUp" && y === 0) direction = { x: 0, y: -gridSize };
+      if (e.key === "ArrowDown" && y === 0) direction = { x: 0, y: gridSize };
+      if (e.key === "ArrowLeft" && x === 0) direction = { x: -gridSize, y: 0 };
+      if (e.key === "ArrowRight" && x === 0) direction = { x: gridSize, y: 0 };
+    });
+
+    // Save High Score
+    function saveHighScore(score) {
+      fetch("/snake/highscores/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: JSON.stringify({ score })
+      }).then(updateHighScores);
+    }
+
+    // Update High Scores
+    function updateHighScores() {
+      fetch("/snake/highscores/")
+        .then(res => res.json())
+        .then(data => {
+          const highscoresList = document.getElementById("highscoresList");
+          highscoresList.innerHTML = "";
+          data.high_scores.forEach(score => {
+            const li = document.createElement("li");
+            li.textContent = score;
+            highscoresList.appendChild(li);
+          });
+        });
+    }
+
+    // Start the Game
+    setInterval(gameLoop, 100);
+    updateHighScores();
+  </script>
+</body>
+</html>

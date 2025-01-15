@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Planner</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa, #c3d9f0);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: #557ea1;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            letter-spacing: 1px;
+        }
+        .header .home-icon {
+            font-size: 24px;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+        }
+        .header .home-icon:hover {
+            color: #d3e3f1;
+        }
+        .container {
+            flex: 1;
+            margin: 20px auto;
+            max-width: 95%;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            overflow-x: auto;
+        }
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .schedule-table th, .schedule-table td {
+            border: 1px solid #ddd;
+            text-align: center;
+            padding: 8px;
+            min-width: 150px;
+        }
+        .schedule-table th {
+            background-color: #557ea1;
+            color: white;
+            position: sticky;
+            top: 0;
+        }
+        .schedule-table td {
+            background-color: #f9f9f9;
+        }
+        .schedule-table td input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            text-align: center;
+            outline: none;
+        }
+        .schedule-table td input:focus {
+            background: #e6f7ff;
+            border: 1px solid #0074d9;
+        }
+        .schedule-table td.saved {
+            background-color: #fff3cd; /* Yellow for saved schedules */
+        }
+        .schedule-table td.posted {
+            background-color: #d4edda; /* Green for posted schedules */
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>Schedule Planner</h1>
+        <a href="http://127.0.0.1:8000/auth/home/" class="home-icon">
+            <span>&#x2302; Home</span>
+        </a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <label for="startDate" class="form-label">Start Date:</label>
+                <input type="date" id="startDate" class="form-control">
+            </div>
+            <div class="col-md-4">
+                <label for="endDate" class="form-label">End Date:</label>
+                <input type="date" id="endDate" class="form-control">
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-primary mt-4 w-100" onclick="loadSchedules()">Load Schedule Planner</button>
+            </div>
+        </div>
+
+        <table class="schedule-table" id="scheduleTable">
+            <thead>
+                <tr id="dateRow">
+                    <th>Employee</th>
+                </tr>
+            </thead>
+            <tbody id="scheduleBody">
+                <!-- Rows will be dynamically populated -->
+            </tbody>
+        </table>
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <button class="btn btn-success w-100" onclick="saveSchedules()">Save Schedules</button>
+            </div>
+            <div class="col-md-6">
+                <button class="btn btn-secondary w-100" onclick="postSchedules()">Post Schedules</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let usersData = [];
+        let schedulesData = [];
+
+        // Fetch users from API
+        async function fetchUsers() {
+            try {
+                const response = await fetch('/api/users/');
+                if (!response.ok) throw new Error(`Failed to fetch users: ${response.status}`);
+                usersData = await response.json();
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        // Fetch existing schedules from the backend
+        async function fetchSchedules(startDate, endDate) {
+            try {
+                const response = await fetch(`/api/schedules/?start_date=${startDate}&end_date=${endDate}`);
+                if (!response.ok) throw new Error(`Failed to fetch schedules: ${response.status}`);
+                schedulesData = await response.json();
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        // Populate the date headers dynamically
+        function populateDates(startDate, endDate) {
+            const dateRow = document.getElementById("dateRow");
+            dateRow.innerHTML = "<th>Employee</th>"; // Reset date row
+            let currentDate = new Date(startDate);
+
+            while (currentDate <= new Date(endDate)) {
+                const th = document.createElement("th");
+                th.textContent = currentDate.toLocaleDateString('en-US', {
+                    weekday: 'short',
+                    month: 'short',
+                    day: 'numeric',
+                });
+                dateRow.appendChild(th);
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+        }
+
+        // Populate the user rows dynamically
+        function populateUsers(startDate, endDate) {
+            const scheduleBody = document.getElementById("scheduleBody");
+            scheduleBody.innerHTML = ""; // Reset schedule body
+
+            usersData.sort((a, b) => a.last_name.localeCompare(b.last_name));
+
+            usersData.forEach(user => {
+                const row = document.createElement("tr");
+
+                // Employee name column
+                const nameCell = document.createElement("td");
+                nameCell.textContent = `${user.last_name}, ${user.first_name}`;
+                nameCell.style.fontWeight = "bold";
+                row.appendChild(nameCell);
+
+                let currentDate = new Date(startDate);
+                while (currentDate <= new Date(endDate)) {
+                    const cell = document.createElement("td");
+                    const input = document.createElement("input");
+                    input.type = "text";
+                    input.placeholder = "Add Hours";
+                    input.setAttribute("data-user-id", user.id);
+                    input.setAttribute("data-date", currentDate.toISOString().split("T")[0]);
+
+                    const existingSchedule = schedulesData.find(schedule =>
+                        schedule.user === user.id &&
+                        schedule.date === currentDate.toISOString().split("T")[0]
+                    );
+
+                    if (existingSchedule) {
+                        cell.textContent = `${existingSchedule.start_time} - ${existingSchedule.end_time}`;
+                        cell.classList.add(existingSchedule.status === 'POSTED' ? 'posted' : 'saved');
+                        if (existingSchedule.status === 'POSTED') {
+                            input.disabled = true;
+                        }
+                    } else {
+                        cell.appendChild(input);
+                    }
+
+                    row.appendChild(cell);
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+
+                scheduleBody.appendChild(row);
+            });
+        }
+
+        async function loadSchedules() {
+            const startDate = document.getElementById("startDate").value;
+            const endDate = document.getElementById("endDate").value;
+
+            if (!startDate || !endDate) {
+                alert("Please select both start and end dates.");
+                return;
+            }
+
+            await fetchSchedules(startDate, endDate);
+            populateDates(startDate, endDate);
+            populateUsers(startDate, endDate);
+        }
+
+        async function saveSchedules() {
+            const inputs = document.querySelectorAll("td input");
+            const schedulesToSave = [];
+
+            inputs.forEach(input => {
+                const userId = input.getAttribute("data-user-id");
+                const date = input.getAttribute("data-date");
+                const hours = input.value.trim();
+
+                if (hours) {
+                    schedulesToSave.push({
+                        user: userId,
+                        date: date,
+                        start_time: hours.split(" - ")[0],
+                        end_time: hours.split(" - ")[1],
+                        status: "SAVED",
+                    });
+                }
+            });
+
+            try {
+                const response = await fetch("/api/schedules/create/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": getCSRFToken(), // Include CSRF token
+                    },
+                    body: JSON.stringify(schedulesToSave),
+                });
+
+                if (response.ok) {
+                    alert("Schedules saved successfully!");
+                    loadSchedules();
+                } else {
+                    alert("Failed to save schedules. Please try again.");
+                }
+            } catch (error) {
+                console.error("Error saving schedules:", error);
+                alert("An error occurred while saving schedules.");
+            }
+        }
+
+        function getCSRFToken() {
+            const name = "csrftoken";
+            const cookies = document.cookie.split("; ");
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].split("=");
+                if (cookie[0] === name) {
+                    return cookie[1];
+                }
+            }
+            return "";
+        }
+
+        async function postSchedules() {
+            const postedSchedules = schedulesData
+                .filter(schedule => schedule.status === "SAVED")
+                .map(schedule => ({
+                    id: schedule.id, // Include the schedule ID for updating
+                    status: "POSTED",
+                }));
+
+            try {
+                const response = await fetch("/api/schedules/", {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": getCSRFToken(),
+                    },
+                    body: JSON.stringify(postedSchedules),
+                });
+
+                if (response.ok) {
+                    alert("Schedules posted successfully!");
+                    loadSchedules(); // Reload schedules to reflect changes
+                } else {
+                    alert("Failed to post schedules. Please try again.");
+                }
+            } catch (error) {
+                console.error("Error posting schedules:", error);
+                alert("An error occurred while posting schedules.");
+            }
+        }
+
+
+        async function initialize() {
+            await fetchUsers();
+        }
+
+        initialize();
+    </script>
+</body>
+</html>

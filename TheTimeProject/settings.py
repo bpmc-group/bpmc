@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'view_timecard',
     'view_schedule',
     'reporting',
+    'tic_tac_toe',
+    'snake_game',
 ]
 
 # Custom User model

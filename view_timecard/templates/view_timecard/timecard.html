@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Timecard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa, #c3d9f0);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: #557ea1;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            letter-spacing: 1px;
+        }
+        .header .home-icon {
+            font-size: 24px;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+        }
+        .header .home-icon:hover {
+            color: #d3e3f1;
+        }
+        .container {
+            flex: 1;
+            margin: 20px auto;
+            max-width: 1200px;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #33475b;
+        }
+        label {
+            font-weight: bold;
+        }
+        .table {
+            margin-top: 20px;
+        }
+        .footer {
+            background: #33475b;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            position: sticky;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>My Timecard</h1>
+        <a href="http://127.0.0.1:8000/auth/home/" class="home-icon">
+            <span>&#x2302; Home</span>
+        </a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h2>Timecard</h2>
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <label for="startDate" class="form-label">Start Date:</label>
+                <input type="date" id="startDate" class="form-control">
+            </div>
+            <div class="col-md-6">
+                <label for="endDate" class="form-label">End Date:</label>
+                <input type="date" id="endDate" class="form-control">
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead class="table-primary text-center">
+                    <tr>
+                        <th>Date</th>
+                        <th>In</th>
+                        <th>Out</th>
+                        <th>In</th>
+                        <th>Out</th>
+                    </tr>
+                </thead>
+                <tbody id="timecardRows">
+                    <tr>
+                        <td colspan="5" class="text-center">No data available</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        &copy; 2025 Employee Portal. All Rights Reserved.
+    </div>
+
+    <script>
+        async function fetchPunches(startDate, endDate) {
+            try {
+                const response = await fetch(`/view-timecard/data/?start_date=${startDate}&end_date=${endDate}`);
+                if (!response.ok) throw new Error(`Failed to fetch punches: ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.error("Error fetching punches:", error);
+                return [];
+            }
+        }
+
+        function convertToPST(utcTime) {
+            const utcDate = new Date(utcTime);
+            return utcDate.toLocaleTimeString('en-US', {
+                timeZone: 'America/Los_Angeles',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true, // 12-hour format
+            });
+        }
+
+        async function loadTimecards() {
+            const startDate = document.getElementById("startDate").value;
+            const endDate = document.getElementById("endDate").value;
+
+            if (!startDate || !endDate) {
+                alert("Please select both start and end dates.");
+                return;
+            }
+
+            const punches = await fetchPunches(startDate, endDate);
+
+            const tableBody = document.getElementById("timecardRows");
+            tableBody.innerHTML = ""; // Clear previous rows
+
+            if (punches.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center">No data available</td>
+                    </tr>`;
+                return;
+            }
+
+            const punchMap = {};
+            punches.forEach(punch => {
+                const punchDate = new Date(punch.punch_time).toLocaleDateString('en-US');
+                if (!punchMap[punchDate]) punchMap[punchDate] = [];
+                punchMap[punchDate].push(convertToPST(punch.punch_time));
+            });
+
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+
+            while (start <= end) {
+                const formattedDate = start.toLocaleDateString('en-US');
+                const punchesForDate = punchMap[formattedDate] || [];
+
+                const row = `
+                    <tr>
+                        <td>${formattedDate}</td>
+                        <td>${punchesForDate[0] || ''}</td>
+                        <td>${punchesForDate[1] || ''}</td>
+                        <td>${punchesForDate[2] || ''}</td>
+                        <td>${punchesForDate[3] || ''}</td>
+                    </tr>`;
+                tableBody.innerHTML += row;
+                start.setDate(start.getDate() + 1);
+            }
+        }
+
+        document.getElementById("startDate").addEventListener("change", loadTimecards);
+        document.getElementById("endDate").addEventListener("change", loadTimecards);
+    </script>
+</body>
+</html>

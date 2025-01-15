@@ -31,4 +31,6 @@ urlpatterns = [
     path('view-timecard/', include('view_timecard.urls')),
     path('view-schedule/', include('view_schedule.urls')),
     path('reporting/', include('reporting.urls')),
+    path('tic_tac_toe/', include('tic_tac_toe.urls')),
+    path('snake/', include('snake_game.urls')),
 ]
