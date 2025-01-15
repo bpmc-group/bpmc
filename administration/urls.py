@@ -1,13 +1,15 @@
 from django.urls import path
-# from .views import landing_page
 from . import views
+from django.shortcuts import render
 
 urlpatterns = [
-    # path('', landing_page, name='administration_landing_page'),
-    path('application_setup/', views.application_setup, name='application_setup'),
-    path('data_import_tool/', views.data_import_tool, name='data_import_tool'),
-    path('setup_data_manager/', views.setup_data_manager, name='setup_data_manager'),
-    path('devices/', views.devices, name='devices'),
-    path('business_processes/', views.business_processes, name='business_processes'),
-    path('developer_portal/', views.developer_portal, name='developer_portal'),
+    path('home/', views.admin_home, name='admin_home'),
+    path('users/', views.user_management, name='user_management'),
+    path('add_user/', views.add_user, name='add_user'),
+    path('function_access_profiles/', views.function_access_profiles, name='function_access_profiles'),
+    path('function_access_profiles/create/', views.create_access_profile, name='create_access_profile'),
+    path('function_access_profiles/edit/', views.edit_access_profile, name='edit_access_profile'),
+    path('assign_profiles_to_user/', views.assign_profile_to_user, name='assign_profiles_to_user'),
+    path('permission_denied/', views.permission_denied, name='permission_denied'),
 ]
+

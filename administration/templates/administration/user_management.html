@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #c1b7d8, #5d898f);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .main-container {
+            width: 90%;
+            height: 90%;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .header {
+            flex: 0 0 10%;
+            background-color: #557ea1;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            font-size: 1.5rem;
+        }
+        .header a {
+            text-decoration: none;
+            color: white;
+            font-size: 1rem;
+        }
+        .header a:hover {
+            color: #B0E0E6;
+        }
+        .top-container {
+            flex: 0 0 15%;
+            padding: 20px;
+            background-color: #f7f7f7;
+            border-bottom: 2px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .bottom-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .table th {
+            background-color: #557ea1;
+            color: white;
+            text-align: center;
+        }
+        .table td {
+            text-align: center;
+        }
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <span>User Management</span>
+            <a href="http://127.0.0.1:8000/auth/home/" class="btn btn-outline-light btn-sm">Home</a>
+        </div>
+
+        <!-- Top Container -->
+        <div class="top-container">
+            <div class="search-bar">
+                <input type="text" id="search-input" class="form-control" placeholder="Search users...">
+                <button class="btn btn-primary" onclick="searchUsers()">Search</button>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-success" onclick="saveChanges()">Save Changes</button>
+                <button class="btn btn-danger" onclick="deleteSelected()">Delete Selected</button>
+            </div>
+        </div>
+
+        <!-- Bottom Container -->
+        <div class="bottom-container">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="select-all" onclick="selectAllUsers(this)"></th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Hire Date</th>
+                        <th>Employment Status</th>
+                        <th>Username</th>
+                        <th>User Status</th>
+                        <th>Primary Job</th>
+                    </tr>
+                </thead>
+                <tbody id="users-table-body">
+                    <!-- Rows will be dynamically populated -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const usersTableBody = document.getElementById("users-table-body");
+        let usersData = [];
+
+        // Fetch users
+        async function fetchUsers() {
+            try {
+                console.log("Fetching users...");
+                const response = await fetch('/api/users/');
+                if (!response.ok) throw new Error(`Failed to fetch users: ${response.status}`);
+                usersData = await response.json();
+                console.log("Fetched users:", usersData);
+                populateTable(usersData);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        // Populate the table
+        function populateTable(users) {
+            usersTableBody.innerHTML = '';
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><input type="checkbox" class="select-user" data-id="${user.id}"></td>
+                    <td contenteditable="true" data-field="first_name">${user.first_name || 'N/A'}</td>
+                    <td contenteditable="true" data-field="last_name">${user.last_name || 'N/A'}</td>
+                    <td contenteditable="true" data-field="email">${user.email || 'N/A'}</td>
+                    <td contenteditable="true" data-field="hire_date">${user.hire_date || 'N/A'}</td>
+                    <td contenteditable="true" data-field="employment_status">${user.employment_status || 'N/A'}</td>
+                    <td contenteditable="true" data-field="username">${user.username || 'N/A'}</td>
+                    <td contenteditable="true" data-field="user_status">${user.user_status || 'N/A'}</td>
+                    <td contenteditable="true" data-field="primary_job">${user.primary_job || 'N/A'}</td>
+                `;
+                usersTableBody.appendChild(row);
+            });
+        }
+
+        async function updateUser(id, data) {
+            try {
+                const response = await fetch(`/api/users/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
+                console.log(`Update response for user ID ${id}:`, response);
+                if (!response.ok) throw new Error('Update failed');
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        async function deleteSelected() {
+            const selectedIds = Array.from(document.querySelectorAll('.select-user:checked')).map(checkbox => checkbox.getAttribute('data-id'));
+            for (const id of selectedIds) {
+                try {
+                    const response = await fetch(`/api/users/${id}`, { method: 'DELETE' });
+                    console.log(`Delete response for user ID ${id}:`, response);
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+            fetchUsers();
+        }
+
+        fetchUsers();
+    </script>
+</body>
+</html>
