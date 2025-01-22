@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+#NEC: when running locally, set env variables DEVELOPMENT_MODE=True & DEBUG=True
+
 from pathlib import Path
 import os
 import sys
@@ -24,19 +26,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", get_random_secret_key())
+#raise Exception("Secret_key = " + str(SECRET_KEY)) #displays secret key for saving
 
 DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
 
 if DEVELOPMENT_MODE is True:
     ALLOWED_HOSTS = []
     # SECURITY WARNING: don't run with debug turned on in production!
-    DEBUG = True
+    #DEBUG = True
 else:
     ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
-    DEBUG = False
+    #DEBUG = False
     #raise Exception("DEBUG = " + str(DEBUG))
 # use this test instead of testing Dev_mode once we get things more advanced
-#DEBUG = os.getenv("DEBUG", "False") == "True"
+DEBUG = os.getenv("DEBUG", "False") == "True" # DEBUG should be set to False on SERVER
+#raise Exception("DEBUG = " + str(DEBUG)) #verify DEBUG is set as expected
 
 # Application definition
 
@@ -106,7 +110,7 @@ if DEVELOPMENT_MODE is True:
             "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
         }
     }
-elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
+elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic': #take this branch on server
     if os.getenv("DATABASE_URL", None) is None:
         raise Exception("DATABASE_URL environment variable not defined")
     DATABASES = {
@@ -142,13 +146,20 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
+USE_L10N = True
+
 USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+if DEVELOPMENT_MODE:
+    STATIC_URL = 'static/'
+else:
+    STATIC_URL = "/static/"
+    STATIC_ROOT = os.path.join(BASE_DIR, "static_output")
+    #STATICFILES_DIRS = (os.path.join(ASE_DIR, "static"),) #include other static locations
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
