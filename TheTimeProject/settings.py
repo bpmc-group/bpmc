@@ -32,12 +32,10 @@ DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
 
 if DEVELOPMENT_MODE is True:
     ALLOWED_HOSTS = []
-    # SECURITY WARNING: don't run with debug turned on in production!
-    #DEBUG = True
+    #raise Exception("DEVELOPMENT_MODE = " + str(DEVELOPMENT_MODE))
 else:
     ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
-    #DEBUG = False
-    #raise Exception("DEBUG = " + str(DEBUG))
+    #raise Exception("DEVELOPMENT_MODE = " + str(DEVELOPMENT_MODE))
 # use this test instead of testing Dev_mode once we get things more advanced
 DEBUG = os.getenv("DEBUG", "False") == "True" # DEBUG should be set to False on SERVER
 #raise Exception("DEBUG = " + str(DEBUG)) #verify DEBUG is set as expected
