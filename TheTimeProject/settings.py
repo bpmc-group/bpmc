@@ -10,25 +10,37 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+#NEC: when running locally, set env variables DEVELOPMENT_MODE=True & DEBUG=True
+
 from pathlib import Path
 import os
+import sys
+import dj_database_url
+from django.core.management.utils import get_random_secret_key
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-8ln9o)a%i!*dx#pt@81=c-6auyr)tl3^js*y2^e+(k1$$a)1yo'
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", get_random_secret_key())
+#raise Exception("Secret_key = " + str(SECRET_KEY)) #displays secret key for saving
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-DEVELOPMENT_MODE = True
+DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
 
-ALLOWED_HOSTS = []
-
+if DEVELOPMENT_MODE is True:
+    ALLOWED_HOSTS = []
+    # SECURITY WARNING: don't run with debug turned on in production!
+    #DEBUG = True
+else:
+    ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+    #DEBUG = False
+    #raise Exception("DEBUG = " + str(DEBUG))
+# use this test instead of testing Dev_mode once we get things more advanced
+DEBUG = os.getenv("DEBUG", "False") == "True" # DEBUG should be set to False on SERVER
+#raise Exception("DEBUG = " + str(DEBUG)) #verify DEBUG is set as expected
 
 # Application definition
 
@@ -91,12 +103,19 @@ WSGI_APPLICATION = 'TheTimeProject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if DEVELOPMENT_MODE is True:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        }
     }
-}
+elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic': #take this branch on server
+    if os.getenv("DATABASE_URL", None) is None:
+        raise Exception("DATABASE_URL environment variable not defined")
+    DATABASES = {
+        "default": dj_database_url.parse(os.environ.get("DATABASE_URL")),
+    }
 
 
 # Password validation
@@ -126,6 +145,8 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
+
+USE_L10N = True
 
 USE_TZ = True
 

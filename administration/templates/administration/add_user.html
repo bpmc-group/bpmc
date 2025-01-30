@@ -1,7 +1,13 @@
-{% extends "TheTimeProject/base.html" %}
+{% extends "TheTimeProject/std.html" %}
 
 <title>{% block title %}Add User base{% endblock %}</title>
-
+<style>body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa, #c3d9f0);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}</style>
 {% block content %}
 <body>
     <!-- Top Bar -->
@@ -220,6 +226,6 @@
             }
         });
     </script>
-{% endblock %}
 </body>
-</html>
+{% endblock %}
+
