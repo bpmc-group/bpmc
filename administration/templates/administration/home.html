@@ -1,99 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administration Panel</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa, #c3d9f0);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        .top-bar {
-            background-color: #33475b;
-            color: white;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .top-bar h3 {
-            margin: 0;
-            font-size: 20px;
-        }
-        .top-bar .home-icon {
-            font-size: 20px;
-            text-decoration: none;
-            color: white;
-            display: flex;
-            align-items: center;
-        }
-        .top-bar .home-icon span {
-            margin-left: 5px;
-            font-size: 16px;
-        }
-        .top-bar .home-icon:hover {
-            color: #d3e3f1;
-        }
-        .container {
-            margin: 20px auto;
-            max-width: 800px;
-            padding: 30px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        h1 {
-            font-size: 28px;
-            text-align: center;
-            margin-bottom: 20px;
-            color: #33475b;
-        }
-        .section-header {
-            background-color: #557ea1;
-            color: white;
-            padding: 10px 15px;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-bottom: 10px;
-            transition: background-color 0.3s ease;
-        }
-        .section-header:hover {
-            background-color: #405d78;
-        }
-        .list-group-item {
-            padding: 8px 15px;
-            font-size: 14px;
-        }
-        .list-group-item a {
-            text-decoration: none;
-            color: #007bff;
-        }
-        .list-group-item a:hover {
-            text-decoration: underline;
-        }
-        .footer {
-            background: #33475b;
-            color: white;
-            text-align: center;
-            padding: 10px;
-            font-size: 14px;
-        }
-    </style>
-</head>
-<body>
+{% extends 'administration/admin_std_template.html' %}
+
+<title>{% block title %}Administration Panel{% endblock %}</title>
+
+<!-- Main Content -->
+{% block content %}
     <!-- Top Bar -->
     <div class="top-bar">
-        <h3 class="mb-0">Welcome back, {{ request.user.first_name }}</h3>
-        <a href="http://127.0.0.1:8000/auth/home/" class="home-icon">
-            <span>&#x2302;</span><span>Home</span> <!-- Unicode for home icon -->
+        Administration  
+              <a href="http://127.0.0.1:8000/auth/home/" class="home-icon">
+            <span>&#x2302;Home</span> <!-- Unicode for home icon -->
         </a>
     </div>
 
@@ -168,12 +83,4 @@
             </div>
         </div>
     </div>
-
-    <!-- Footer
-    <div class="footer">
-        &copy; 2025 Time Management System. All Rights Reserved.
-    </div> -->
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+{% endblock %}

@@ -1,62 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assign Profiles to Users</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa, #c3d9f0);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        .header {
-            background: #557ea1;
-            color: white;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-            letter-spacing: 1px;
-        }
-        .header .home-icon {
-            font-size: 24px;
-            cursor: pointer;
-            text-decoration: none;
-            color: white;
-        }
-        .header .home-icon:hover {
-            color: #d3e3f1;
-        }
-        .container {
-            margin: 20px auto;
-            max-width: 90%;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-        }
-    </style>
-</head>
-<body>
-    <!-- Header -->
-    <div class="header">
-        <h1>Assign Profiles to Users</h1>
+{% extends "TheTimeProject/std.html" %}
+
+<title>{% block title %}Assign Profiles to Users{% endblock %}</title>
+
+{% block content %}    <!-- Header -->
+    <div class="top-bar">
+        Assign Profiles to Users
         <a href="http://127.0.0.1:8000/auth/home/" class="home-icon">&#x2302; Home</a>
     </div>
 
     <!-- Main Content -->
     <div class="container">
-        <h2 class="text-center mb-4">Assign Profiles to Users</h2>
+        <h3>Assign Profiles to Users</h3>
         {% if messages %}
         <div class="alert alert-danger" role="alert">
             {% for message in messages %}
@@ -85,5 +39,8 @@
             <button type="submit" class="btn btn-primary w-100">Assign Profile</button>
         </form>
     </div>
-</body>
-</html>
+    <!-- Footer -->
+    <div>
+        <p class="footer">&copy; 2025  The Time Project All Rights Reserved</p>
+    </div>   
+{% endblock %}

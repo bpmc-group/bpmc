@@ -1,3 +1,10 @@
+<!-- This is the master std template that will be the "base" for all
+     the std templates used by the apps. Django seems happier using
+     one std template to inherit from and one std css per app. They
+     feel that the apps will be more portable that way, so the whole
+     app can be inserted into a different project intact, without 
+     dependencies on files in different apps or projects. 
+     DRY be dammed.!! Copy this file into each app as a starting point  -->
 {% load static %}  
 <!DOCTYPE html>
 <html lang="en">
@@ -5,14 +12,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}The Time Project{% endblock %}</title>
-    <link href={% static '/css/std_root.css' %} rel="stylesheet" >
+    <link href={% static 'admin/std.css' %} rel="stylesheet" >
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+<body>
 <!-- Main Content -->
 {% block content %}
     <!-- Content will be injected here -->
 {% endblock %}
-
+</body>
     <!--  commented out text cannot be inside a block
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     -->
