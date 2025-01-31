@@ -1,8 +1,8 @@
-{% extends "TheTimeProject/std.html" %}
+{% extends "administration/admin_std_template.html" %}
 
-<title>{% block title %}Assign Profiles to Users{% endblock %}</title>
+<title>{% block title %}Assign Profile{% endblock %}</title>
 
-{% block content %}    <!-- Header -->
+{% block content %}
     <div class="top-bar">
         Assign Profiles to Users
         <a href="http://127.0.0.1:8000/auth/home/" class="home-icon">&#x2302; Home</a>
@@ -38,9 +38,5 @@
             </div>
             <button type="submit" class="btn btn-primary w-100">Assign Profile</button>
         </form>
-    </div>
-    <!-- Footer -->
-    <div>
-        <p class="footer">&copy; 2025  The Time Project All Rights Reserved</p>
-    </div>   
+    </div> 
 {% endblock %}
