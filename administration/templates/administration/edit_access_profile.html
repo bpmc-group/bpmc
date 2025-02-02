@@ -1,9 +1,9 @@
-{% extends "TheTimeProject/std.html" %}
+{% extends "administration/admin_std_template.html" %}
 
 <title>{% block title %}Edit Access Profile{% endblock %}</title>
 
 {% block content %}
-    <!-- Header -->
+    <!-- top-bar that included function name and Home link -->
     <div class="top-bar">
         Edit Access Profile
         <a href="http://127.0.0.1:8000/auth/home/" class="home-icon">&#x2302; Home</a>
@@ -35,8 +35,4 @@
             <button type="submit" class="btn btn-primary w-100">Save Changes</button>
         </form>
     </div>
-    <!-- Footer -->
-    <div>
-        <p class="footer">&copy; 2025  The Time Project All Rights Reserved</p>
-    </div>
-{% endblock %}
+ {% endblock %}

@@ -1,18 +1,19 @@
-{% extends "TheTimeProject/std.html" %}
+{% extends "administration/admin_std_template.html" %}
 
 <title>{% block title %}Assign Profiles to Users{% endblock %}</title>
 
-{% block content %}    <!-- Header -->
+{% block content %}
+    <!-- top-bar that includes function name and Home link -->
     <div class="top-bar">
         Assign Profiles to Users
         <a href="http://127.0.0.1:8000/auth/home/" class="home-icon">&#x2302; Home</a>
     </div>
-
     <!-- Main Content -->
     <div class="container">
         <h3>Assign Profiles to Users</h3>
         {% if messages %}
         <div class="alert alert-danger" role="alert">
+            <!-- NEEDS TO CHECK IF SUCCESSFUL OR FAILURE SO ALERT COLORING IS CORRECT -->
             {% for message in messages %}
                 {{ message }}
             {% endfor %}
@@ -38,9 +39,5 @@
             </div>
             <button type="submit" class="btn btn-primary w-100">Assign Profile</button>
         </form>
-    </div>
-    <!-- Footer -->
-    <div>
-        <p class="footer">&copy; 2025  The Time Project All Rights Reserved</p>
     </div>   
 {% endblock %}

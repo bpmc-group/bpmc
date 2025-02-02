@@ -1,9 +1,9 @@
-{% extends "TheTimeProject/std.html" %}
+{% extends "administration/admin_std_template.html" %}
 
 <title>{% block title %}Create Access Profile{% endblock %}</title>
 
 {% block content %}
-    <!-- Header -->
+    <!-- Top bar with name of view and the Home link -->
     <div class="top-bar">
         Create Access Profile
         <a href="http://127.0.0.1:8000/auth/home/" class="home-icon">&#x2302; Home</a>
@@ -34,10 +34,5 @@
             </table>
             <button type="submit" class="btn btn-success w-100">Create Profile</button>
         </form>
-    </div>
-    <!-- Footer -->
-    <div>
-        <p class="footer">&copy; 2025  The Time Project All Rights Reserved</p>
-    </div>
-    
+    </div> 
 {% endblock %}
