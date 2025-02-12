@@ -85,7 +85,7 @@ body {
     padding: 10px;
     font-size: 1rem;
 }
-/* Used by the User Management screen */
+/* Following classes used by the User Management screen */
 .actions-container {
     flex: 0 0 5%;
     padding: 20px;
