@@ -25,25 +25,31 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+# The following line will create a new DJANGO_SECRET_KEY every time you run
+#   IF you don't set it as an environmental variable (it is set on server)
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", get_random_secret_key())
 #raise Exception("Secret_key = " + str(SECRET_KEY)) #displays secret key for saving
 
+
+#BPMC project - you ***MUST*** set DEVELOPMENT_MODE to True
+#  to run this project on your local computer (NOT ON SERVER)
 DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
 
 if DEVELOPMENT_MODE is True:
     ALLOWED_HOSTS = []
     # SECURITY WARNING: don't run with debug turned on in production!
     #DEBUG = True
+    #raise Exception("DEBUG = " + str(DEBUG)) #VERIFY DEBUG env variable settin
 else:
     ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
     #DEBUG = False
-    #raise Exception("DEBUG = " + str(DEBUG))
+    #raise Exception("DEBUG = " + str(DEBUG)) #VERIFY DEBUG env variable setting
+
 # use this test instead of testing Dev_mode once we get things more advanced
 DEBUG = os.getenv("DEBUG", "False") == "True" # DEBUG should be set to False on SERVER
 #raise Exception("DEBUG = " + str(DEBUG)) #verify DEBUG is set as expected
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth', # User authentication system
@@ -100,7 +106,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'TheTimeProject.wsgi.application'
 
 
-# Database
+# Database is sqlite3 on local computer OR if NOT DEVELOPMENT_MODE uses postgreSQL
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 if DEVELOPMENT_MODE is True:
